@@ -31,11 +31,11 @@ for name in image_names:
 # convert the list of image arrays to a NumPy array
 frames = np.array(image_arrays)
 
-#convert frames to grayscale
+# convert frames to grayscale
 def grayScaleImage(frame):
     return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-#image threshold of two grayscale pics
+# image threshold of two grayscale pics
 def imageThreshold(grayA, grayB):
     diff_image = cv2.absdiff(grayB, grayA)
 
@@ -53,7 +53,21 @@ for i in range(0,len(frames)-1):
 plt.imshow(cv2.absdiff(grayB, grayA), cmap = 'gray')
 plt.show()
 
-#image threshold
+# image threshold
 thresh = imageThreshold(grayA, grayB)
 plt.imshow(thresh, cmap = 'gray')
+plt.show()
+
+# image dilation from image threshold
+def imageDilation(thresh):
+    kernel = np.ones((3, 3), np.uint8)
+    dilated = cv2.dilate(thresh, kernel, iterations=1)
+
+    return dilated
+
+# apply image dilation
+dilated = imageDilation(thresh)
+
+# plot dilated image
+plt.imshow(dilated, cmap = 'gray')
 plt.show()
