@@ -6,6 +6,51 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import glob
 
+# convert frames to grayscale
+def grayScaleImage(frame):
+    return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+# image threshold of two grayscale pics
+def imageThreshold(grayA, grayB):
+    diff_image = cv2.absdiff(grayB, grayA)
+
+    # perform image thresholding
+    ret, thresh = cv2.threshold(diff_image, 30, 255, cv2.THRESH_BINARY)
+
+    return thresh
+
+# image dilation from image threshold
+def imageDilation(thresh):
+    kernel = np.ones((3, 3), np.uint8)
+    dilated = cv2.dilate(thresh, kernel, iterations=1)
+
+    return dilated
+
+
+# count valid contours
+def contours(thresh):
+    contours, hierarchy = cv2.findContours(thresh.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+
+    valid_cntrs = []
+
+    for i, cntr in enumerate(contours):
+        x, y, w, h = cv2.boundingRect(cntr)
+        # kiem tra contour co nam trong vung quy dinh hay kh (duoi y = 80) va dien tich phai du lon
+        if (x <= 200) & (y >= 80) & (cv2.contourArea(cntr) >= 25):
+            valid_cntrs.append(cntr)
+    return valid_cntrs
+
+
+ # ve contour tren hinh goc
+def contourOriginal(frame,thresh):
+    dmy = frame.copy()
+    cv2.drawContours(dmy, contours(thresh), -1, (127, 200, 0), 2)
+    cv2.line(dmy, (0, 80), (256, 80), (100, 255, 255))
+    plt.imshow(dmy)
+    plt.show()
+
+kernel = np.ones((4,4),np.uint8)
+
 #import frame
 path = "frames"
 
@@ -31,43 +76,13 @@ for name in image_names:
 # convert the list of image arrays to a NumPy array
 frames = np.array(image_arrays)
 
-# convert frames to grayscale
-def grayScaleImage(frame):
-    return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-# image threshold of two grayscale pics
-def imageThreshold(grayA, grayB):
-    diff_image = cv2.absdiff(grayB, grayA)
-
-    # perform image thresholding
-    ret, thresh = cv2.threshold(diff_image, 30, 255, cv2.THRESH_BINARY)
-
-    return thresh
-
-# convert two consecutive frames to grayscale
 for i in range(0,len(frames)-1):
-   grayA = grayScaleImage(frames[i])
-   grayB = grayScaleImage(frames[i+1])
+    # get grayscale images
+    grayA=grayScaleImage(frames[i])
+    grayB=grayScaleImage(frames[i+1])
 
-# plot the image after frame differencing
-plt.imshow(cv2.absdiff(grayB, grayA), cmap = 'gray')
-plt.show()
+    thresh=imageThreshold(grayA, grayB)
 
-# image threshold
-thresh = imageThreshold(grayA, grayB)
-plt.imshow(thresh, cmap = 'gray')
-plt.show()
+    dilated=imageDilation(thresh)
 
-# image dilation from image threshold
-def imageDilation(thresh):
-    kernel = np.ones((3, 3), np.uint8)
-    dilated = cv2.dilate(thresh, kernel, iterations=1)
-
-    return dilated
-
-# apply image dilation
-dilated = imageDilation(thresh)
-
-# plot dilated image
-plt.imshow(dilated, cmap = 'gray')
-plt.show()
+    contourOriginal(frames[i],thresh)
