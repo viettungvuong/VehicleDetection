@@ -5,6 +5,7 @@ from os.path import isfile, join
 import matplotlib.pyplot as plt
 from PIL import Image
 import glob
+import video
 
 # convert frames to grayscale
 def grayScaleImage(frame):
@@ -42,17 +43,23 @@ def contours(thresh):
 
 
  # ve contour tren hinh goc
-def contourOriginal(frame,thresh):
+def contourOriginal(frame,thresh,i,path):
+    valid_countours = contours(thresh)
+
     dmy = frame.copy()
-    cv2.drawContours(dmy, contours(thresh), -1, (127, 200, 0), 2)
+    cv2.drawContours(dmy, valid_countours, -1, (127, 200, 0), 2)
     cv2.line(dmy, (0, 80), (256, 80), (100, 255, 255))
     plt.imshow(dmy)
     plt.show()
 
+    cv2.putText(dmy, "vehicles detected: " + str(len(valid_countours)), (55, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 180, 0), 2)
+    cv2.line(dmy, (0, 80), (256, 80), (100, 255, 255))
+    cv2.imwrite(path + str(i) + '.png', dmy)
+
 kernel = np.ones((4,4),np.uint8)
 
 #import frame
-path = "frames"
+path = "frames/"
 
 # read all image file names in the folder
 image_names = os.listdir(path)
@@ -85,4 +92,8 @@ for i in range(0,len(frames)-1):
 
     dilated=imageDilation(thresh)
 
-    contourOriginal(frames[i],thresh)
+    contourOriginal(frames[i],thresh,i,path)
+
+    video.videoGenerate()
+
+
