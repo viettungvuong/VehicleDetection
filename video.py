@@ -26,7 +26,7 @@ def videoGenerate():
         # inserting the frames into an image array
         frames.append(img)
 
-    out = cv2.VideoWriter(pathVideo, cv2.VideoWriter_fourcc(*'DIVX'), fps, size)
+    out = cv2.VideoWriter(pathVideo, cv2.VideoWriter_fourcc(*'mp4v'), fps, size)
 
     for i in range(len(frames)):
         # writing to a image array

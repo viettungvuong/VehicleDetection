@@ -94,6 +94,5 @@ for i in range(0,len(frames)-1):
 
     contourOriginal(frames[i],thresh,i,path)
 
-    video.videoGenerate()
-
+video.videoGenerate()
 
