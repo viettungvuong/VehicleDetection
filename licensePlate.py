@@ -3,7 +3,7 @@ import imutils
 import pytesseract
 
 path='license_plates/'
-image = cv2.imread(path+'1.jpeg')
+image = cv2.imread(path+'3.jpeg')
 # chinh kich thuoc hinh xuong 500 px
 image = imutils.resize(image, width=500)
 # tao gray image
@@ -23,10 +23,29 @@ img1 = image.copy()
 valid_contours=[]
 # tim nhung contour phu hop, du rong
 for contour in contours:
-    if (cv2.contourArea(contour)>=400):
+    if (cv2.contourArea(contour)>=300):
         valid_contours.append(contour)
 
-cv2.drawContours(img1,valid_contours,-1, (0,255,0), 3)
-cv2.imshow('img1',img1)
+# cv2.drawContours(img1,valid_contours,-1, (0,255,0), 3)
+# cv2.imshow('img1',img1)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+
+# tim countour nao ma la bien so xe
+for contour in valid_contours:
+    perimeter = cv2.arcLength(contour, True) # chu vi contour
+
+    # ham nay tra ve polygonal representation cua contour
+    # ham nay con giup contour don gian hon nhung van giu duoc hinh dang
+    approx = cv2.approxPolyDP(contour, 0.018 * perimeter, True)
+
+    if len(approx)==4: # neu co 4 canh
+        shape = approx # tim duoc bien so xe
+        # luu contour chua bien so xe
+
+        break
+
+cv2.drawContours(image,[shape], -1, (0, 255, 0), 3)
+cv2.imshow('Detected plate', image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
