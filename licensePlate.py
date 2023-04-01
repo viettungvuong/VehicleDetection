@@ -4,7 +4,7 @@ import os
 import pytesseract
 
 path = "license_plates/"
-sampleImg = cv2.imread(path+'6.jpeg')
+sampleImg = cv2.imread(path+'5.jpeg')
 
 def getLicensePlate(image):
     # chinh kich thuoc hinh xuong 500 px
@@ -48,16 +48,22 @@ def getLicensePlate(image):
              # lay phan bien so xe
              x, y, w, h = cv2.boundingRect(contour)
              processImg = image [y: y + h, x: x + w]
-             cv2.imwrite(path+'a.png',processImg)
+             cv2.imwrite(path+'plate.png',processImg)
 
              cv2.drawContours(image, [shape], -1, (255, 0, 0), 3)
-             cv2.imshow('License plate',image)
-             cv2.waitKey(1)
-             cv2.destroyAllWindows()
+             # cv2.imshow('License plate',image)
+             # cv2.waitKey(1)
+             # cv2.destroyAllWindows()
 
              break
        
+def getLicenseNumber(license_plate):
+    text = pytesseract.image_to_string(license_plate, lang='eng') 
+    return text
 
 getLicensePlate(sampleImg)
+
+plateImg = cv2.imread(path+'plate.png')
+print(getLicenseNumber(plateImg))
 
 
