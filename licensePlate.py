@@ -1,3 +1,5 @@
+# cai nay chi dung ocr nen chua chinh xac
+
 import cv2
 import imutils
 import os
@@ -74,7 +76,7 @@ for name in imageNames:
 
    plateImg = cv2.imread(path+'plate'+str(i)+'.png')
    print("i license number is " + getLicenseNumber(plateImg) + "\n")
-   
+
    i+=1
    
 
