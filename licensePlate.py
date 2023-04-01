@@ -11,3 +11,13 @@ gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 # giam noise cua anh
 gray_image = cv2.bilateralFilter(gray_image, 11, 17, 17)
 
+# edge detection
+edge = cv2.Canny(gray_image, 30, 200)
+# tim contour
+contours, new = cv2.findContours(edge.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+img1 = image.copy()
+cv2.drawContours(img1, contours, -1, (0, 255, 0), 3)
+cv2.imshow("img1",img1)
+# cv2.waitKey()
+
+# tim nhung contour phu hop, du rong
